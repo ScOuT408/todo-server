@@ -26,6 +26,11 @@ app.use(express.urlencoded({ extended: false }));
 // mongo connection
 connectDB();
 
+// test route
+app.get("/", (req, res) => {
+  res.send("Hello From Api!");
+});
+
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);

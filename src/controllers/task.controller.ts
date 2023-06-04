@@ -63,19 +63,27 @@ export const updateTask: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
+    const { id } = req.params;
+
     const user = await User.findById(req.user?._id);
     if (!user) return next(new ErrorHandler("User not found", 404));
 
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findById(id);
     if (!task) return next(new ErrorHandler("Task not found", 404));
 
     if (task.user.toString() !== req.user?._id.toString()) {
       return next(new ErrorHandler("You are not allowed", 401));
     }
 
-    task.isCompleted = !task.isCompleted;
-
-    await task.save();
+    await Task.findByIdAndUpdate(
+      id,
+      {
+        isCompleted: !task.isCompleted,
+      },
+      {
+        new: true,
+      }
+    );
 
     res.status(200).json({
       success: true,
